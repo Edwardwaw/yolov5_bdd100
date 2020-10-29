@@ -1,0 +1,56 @@
+model_name: bdd100_yolov5
+
+data:
+  train_annotation_path: /home/wangchao/public_dataset/BDD100/annotations/bdd100k_labels_images_det_coco_val.json
+  val_annotation_path: /home/wangchao/public_dataset/BDD100/annotations/bdd100k_labels_images_det_coco_val.json
+  train_img_root: /home/wangchao/public_dataset/BDD100/images/valids
+  val_img_root: /home/wangchao/public_dataset/BDD100/images/valids
+  img_size: 640
+  batch_size: 8
+  num_workers: 8
+  debug: False
+  remove_blank: Ture
+
+
+model:
+  num_cls: 13
+  anchors: [[10, 13, 16, 30, 33, 23],
+            [30, 61, 62, 45, 59, 119],
+            [116, 90, 156, 198, 373, 326]]
+  strides: [8, 16, 32]
+  scale_name: s  # s/m/l/x
+  freeze_bn: False
+  pretrain: weights/bdd100_yolov5_best_map50.pth
+
+
+hyper_params:
+  use_weight_sample: True
+  fl_gamma: 1.5
+  class_smoothing_eps: 0.1
+  anchor_t: 4.0
+  iou_type: ciou
+  multi_scale: [640]
+
+
+optim:
+  optimizer: SGD
+  lr: 0.01
+  momentum: 0.937
+  milestones: [150, 240]
+  cosine_weights: 1.0
+  warm_up_epoch: 1.
+  weight_decay: 0.0005
+  epochs: 300
+  sync_bn: True
+
+
+
+val:
+  interval: 1
+  weight_path: weights
+  conf_thresh: 0.001
+  iou_thresh: 0.6
+  max_det: 300
+
+
+gpus: '0'
